@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "F:\\Escritorio\\Solidity\\JS\\SmartContract-raffle-Fullstack\\contracts\\Raffle.sol": {
-      "lastModificationDate": 1664988267830,
-      "contentHash": "a90d8167f68273154c58a36c86a6d71c",
+      "lastModificationDate": 1665072886446,
+      "contentHash": "f4490b63b932456c065f337d9c2081b4",
       "sourceName": "contracts/Raffle.sol",
       "solcConfig": {
         "version": "0.8.17",

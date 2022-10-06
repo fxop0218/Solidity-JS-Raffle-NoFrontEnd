@@ -54,11 +54,11 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     /* Constructor */
     constructor(
         address vrfCordinatorV2,
-        uint256 entranceFee,
-        bytes32 gasLine,
         uint64 subscriptionId,
-        uint32 callbackGasLimit,
-        uint256 interval
+        bytes32 gasLine,
+        uint256 interval,
+        uint256 entranceFee,
+        uint32 callbackGasLimit
     ) VRFConsumerBaseV2(vrfCordinatorV2) {
         i_entranceFee = entranceFee;
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCordinatorV2);

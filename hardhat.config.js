@@ -18,13 +18,15 @@ module.exports = {
     networks: {
         hardhat: {
             chainId: 31337,
-            blockConfirmations: 1,
         },
         goerli: {
             chainId: 5,
             blockConfirmations: 6,
             url: goerli_url_network,
             accounts: [private_key],
+        },
+        localhost: {
+            chainId: 31337,
         },
     },
     solidity: "0.8.17",
@@ -34,6 +36,17 @@ module.exports = {
         },
         player: {
             default: 1,
+        },
+    },
+    etherscan: {
+        apiKey: {
+            goerli: ethscan_api_key,
+        },
+    },
+    namedAccounts: {
+        deployer: {
+            default: 0, // here this will by default take the first account as deployer
+            1: 0, // similarly on mainnet it will take the first account as deployer. Note though that depending on how hardhat network are configured, the account 0 on one network can be different than on another
         },
     },
 }
