@@ -1,52 +1,82 @@
-require("@nomiclabs/hardhat-waffle")
-require("@nomiclabs/hardhat-etherscan")
-require("hardhat-deploy")
 require("solidity-coverage")
 require("hardhat-gas-reporter")
 require("hardhat-contract-sizer")
+require("@nomiclabs/hardhat-waffle")
+require("@nomiclabs/hardhat-etherscan")
+require("hardhat-deploy")
 require("dotenv").config()
 
-const goerli_url_network = process.env.GOERLI_RPC_URL || "https://eth-goerli/exemple"
-const private_key =
-    process.env.PRIVATE_KEY || "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-const ethscan_api_key = process.env.ETHERSCAN_API_KEY | ""
-const coinmarketcap_api_key = process.env.COINMARKETCAP_API_KEY | ""
+/**
+ * @type import('hardhat/config').HardhatUserConfig
+ */
 
-/** @type import('hardhat/config').HardhatUserConfig */
+const mainnetRpcURL =
+    process.env.MAINNET_RPC_URL ||
+    process.env.ALCHEMY_MAINNET_RPC_URL ||
+    "https://eth-mainnet.alchemyapi.io/v2/apikey"
+const goerliRpcURL = process.env.GOERLI_RPC_URL || "https://eth-goerli.alchemyapi.io/v2/apikey"
+const privateKey = process.env.PRIVATE_KEY || "0x"
+
+// Your API key for Etherscan, obtain one at https://etherscan.io/
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "0x"
+
 module.exports = {
     defaultNetwork: "hardhat",
     networks: {
         hardhat: {
             chainId: 31337,
         },
-        goerli: {
-            chainId: 5,
-            blockConfirmations: 6,
-            url: goerli_url_network,
-            accounts: [private_key],
-        },
         localhost: {
             chainId: 31337,
         },
+        goerli: {
+            url: goerliRpcURL,
+            accounts: privateKey !== undefined ? [privateKey] : [],
+            saveDeployments: true,
+            chainId: 5,
+        },
+        mainnet: {
+            url: mainnetRpcURL,
+            accounts: privateKey !== undefined ? [privateKey] : [],
+            saveDeployments: true,
+            chainId: 1,
+        },
     },
-    solidity: "0.8.17",
+    etherscan: {
+        apiKey: {
+            goerli: ETHERSCAN_API_KEY,
+        },
+    },
+    gasReporter: {
+        enabled: false,
+        currency: "USD",
+        outputFile: "gas_report.txt",
+        noColors: true,
+    },
+    contractSizer: {
+        runOnCompile: false,
+        only: ["Raffle"],
+    },
     namedAccounts: {
         deployer: {
             default: 0,
+            1: 0,
         },
         player: {
             default: 1,
         },
     },
-    etherscan: {
-        apiKey: {
-            goerli: ethscan_api_key,
-        },
+    mocha: {
+        timeout: 500000,
     },
-    namedAccounts: {
-        deployer: {
-            default: 0, // here this will by default take the first account as deployer
-            1: 0, // similarly on mainnet it will take the first account as deployer. Note though that depending on how hardhat network are configured, the account 0 on one network can be different than on another
-        },
+    solidity: {
+        compilers: [
+            {
+                version: "0.8.17",
+            },
+            {
+                version: "0.4.24",
+            },
+        ],
     },
 }

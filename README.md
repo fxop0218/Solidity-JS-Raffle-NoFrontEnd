@@ -9,6 +9,7 @@ yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers @nomic
 yarn add --dev @chainlink/contracts
 yarn global add hardhat-shorthand
 yarn add --dev @nomicfoundation/hardhat-chai-matchers
+yarn add @nomiclabs/hardhat-etherscan 
 ```
 
 in TS

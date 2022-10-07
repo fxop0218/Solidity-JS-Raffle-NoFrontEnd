@@ -50,9 +50,9 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
         waitConfirmations: network.config.blockConfirmations || 1,
     })
 
+    // Only checked if testnet or mainnet is used.
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
-        console.log("Start verification")
-        console.log(raffle.address)
+        log("Verifying...")
         await verify(raffle.address, arguments)
     }
     console.log("###############################################################")

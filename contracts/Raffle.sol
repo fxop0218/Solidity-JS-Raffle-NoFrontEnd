@@ -34,11 +34,11 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     uint256 private immutable i_entranceFee;
     address payable[] private s_lotteryPlayers;
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
-    bytes32 private immutable i_gasLine;
+    bytes32 private immutable i_gasLane;
     uint64 private immutable i_subscriptionId;
     uint32 private constant NUM_WORDS = 1;
     uint32 private immutable i_callbackGasLimit;
-    uint16 private constant REQUEST_CONFITMATIONS = 3;
+    uint16 private constant REQUEST_CONFIRMATIONS = 3;
 
     /* Raffle var */
     address private s_recentWinner;
@@ -55,14 +55,14 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     constructor(
         address vrfCordinatorV2,
         uint64 subscriptionId,
-        bytes32 gasLine,
+        bytes32 gasLane,
         uint256 interval,
         uint256 entranceFee,
         uint32 callbackGasLimit
     ) VRFConsumerBaseV2(vrfCordinatorV2) {
         i_entranceFee = entranceFee;
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCordinatorV2);
-        i_gasLine = gasLine;
+        i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
         s_raffleState = RaffleState.OPEN;
@@ -75,6 +75,7 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         // Anyone can enter the raffle (public) and is needed pay (payable)
         // require(msg.value > i_entranceFee); gass not efficient
         if (msg.value < i_entranceFee) {
+            // To call (in JS ) put enterRaffle ({value : xx}) == msg.value
             revert Raffle_NotEnoughEthEnterd();
         }
         if (s_raffleState != RaffleState.OPEN) {
@@ -105,10 +106,10 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     }
 
     function performUpkeep(
-        bytes calldata /*performdata*/
+        bytes calldata /* performData */
     ) external override {
-        // after this function is called selectRandomWinner
         (bool upkeepNeeded, ) = checkUpkeep("");
+        // require(upkeepNeeded, "Upkeep not needed");
         if (!upkeepNeeded) {
             revert Raffle_UpkeepNotNeeded(
                 address(this).balance,
@@ -118,12 +119,13 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         }
         s_raffleState = RaffleState.CALCULATING;
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
-            i_gasLine,
+            i_gasLane,
             i_subscriptionId,
-            REQUEST_CONFITMATIONS,
+            REQUEST_CONFIRMATIONS,
             i_callbackGasLimit,
             NUM_WORDS
         );
+        // Quiz... is this redundant?
         emit RequestedRaffleWinner(requestId);
     }
 
